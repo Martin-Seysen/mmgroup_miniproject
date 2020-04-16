@@ -1,0 +1,14 @@
+recursive-include . *.ske *.pyx *.ini *.rst *.bat
+include .gitignore
+include *.py
+include src/miniproject/dev/double_function/*.c
+include src/miniproject/dev/double_function/*.h
+include src/miniproject/dev/triple_function/*.c
+include src/miniproject/dev/triple_function/*.h
+include docs/source/*.rst
+include docs/source/*.inc
+include docs/source/*.py
+include docs/source/*.bib
+
+
+
