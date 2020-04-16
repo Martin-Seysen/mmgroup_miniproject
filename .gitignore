@@ -4,6 +4,7 @@ dist/
 build/
 docs/build
 src/miniproject.egg-info
+src/miniproject/*.dll
 src/miniproject/dev/c_doc/
 src/miniproject/dev/c_files/
 src/miniproject/dev/pxd_files/
