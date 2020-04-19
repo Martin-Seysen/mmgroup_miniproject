@@ -22,10 +22,24 @@ from config import C_DIR, DOC_DIR, DEV_DIR, PXD_DIR, PACKAGE_DIR
 # Delete files
 ####################################################################
 
-# The following files must be deleted are after building the extension
-build_ext_delete = [
+# The following intermediate files must be deleted are after 
+# building the extension
+intermediate_delete = [
      os.path.join(C_DIR, "*.o"),
+     os.path.join(PXD_DIR, "*.o"),
 ]
+
+def delete_intermediate_files():
+    for file_pattern in intermediate_delete:
+        #print(file_pattern)
+        for file in glob(file_pattern):
+            try:
+                #print(file)
+                os.remove(file)
+            except:
+                pass
+
+
 
 # The following files are deleted before building the extension
 # if the command line option -f or --force has been set
@@ -158,6 +172,7 @@ stage2_shared = SharedExtension(
 import_step = CustomBuildStep(
     "import python extensions",
     [sys.executable,  "import_all.py"],
+    [delete_intermediate_files],
     ["pytest", "src/miniproject/", "-v"],
 )
 
@@ -197,7 +212,24 @@ ext_modules=[
 ]
 
 
+long_description = """The *miniproject* package is a tiny package that demonstrates the
+build process for the *mmgroup* package. The *mmgroup* package is a 
+python implementation of Conway's construction of the monster group, 
+which is the largest sporadic finite simple group. 
 
+That package contains C programs that have been generated automatically 
+by a progam code generator. Here automatically generated low-level 
+functions written in C are used to compute rather large tables, which
+will be use by high-level C programs. This means that the build
+process has to take place in several stages. Also, there are C 
+subroutines which are used by both, low-level and high-level functions.
+So it makes sense to place these subroutines into a shared library.
+
+When porting the *mmgroup* package to another operating system, several
+aspects specific to the operating system have to be considered. This 
+*miniproject* package can be considered as a model for the 
+*mmgroup* package focussing on the os-specific aspects.
+"""
 
 
 
@@ -206,10 +238,10 @@ setup(
     version = '0.0.1',    
     license='BSD-2-Clause',
     description='This models the build process of the mmgroup project',
-    long_description='yet to be done',
+    long_description=long_description,
     author='Martin Seysen',
     author_email='m.seysen@gmx.de',
-    url='yet unknown',
+    url='https://github.com/Martin-Seysen/mmgroup_miniproject.git',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
