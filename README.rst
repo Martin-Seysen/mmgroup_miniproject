@@ -10,6 +10,11 @@ later stage of the building process.
 When porting the ``mmgroup`` project to another operating system we  
 highly recommend to port this miniproject first.
 
+
+Project Documentation see
+
+https://mmgroup-miniproject.readthedocs.io/en/latest/
+
 License
 -------
 
