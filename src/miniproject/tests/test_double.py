@@ -6,7 +6,7 @@ import pytest
 
 from random import randint
 
-from miniproject.mini_double import uint_double
+from miniproject.wrapper import wrap_double
 
 
 
@@ -18,7 +18,7 @@ from miniproject.mini_double import uint_double
 def test_double():
     for i in range(24):
         x = randint(0, 1000)
-        assert uint_double(x) == 2 * x
+        assert wrap_double(x) == 2 * x
 
 
 

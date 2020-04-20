@@ -6,7 +6,7 @@ import pytest
 
 from random import randint
 
-from miniproject.mini_triple import uint_triple
+from miniproject.wrapper import wrap_triple
 
 
 
@@ -17,7 +17,7 @@ from miniproject.mini_triple import uint_triple
 @pytest.mark.user
 def test_double():
     for i in range(24):
-        assert uint_triple(i) == 3 * i
+        assert wrap_triple(i) == 3 * i
 
 
 
