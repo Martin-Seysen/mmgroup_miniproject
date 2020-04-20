@@ -36,9 +36,9 @@ Installation
 Application interface
 =====================
 
-.. autofunction:: miniproject.mini_double.uint_double
+.. autofunction:: miniproject.wrapper.wrap_double
 
-.. autofunction:: miniproject.mini_triple.uint_triple
+.. autofunction:: miniproject.wrapper.wrap_triple
 
 
 The modified build process
