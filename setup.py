@@ -10,6 +10,7 @@ import setuptools
 from setuptools import setup, find_packages
 from build_ext_steps import Extension, CustomBuildStep, SharedExtension
 from build_ext_steps import BuildExtCmd
+from distutils.errors import *
 
 
 
