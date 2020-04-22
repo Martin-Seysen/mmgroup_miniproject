@@ -1,2 +1,5 @@
 numpy
+Cython
+pytest
+sphinx
 sphinxcontrib.bibtex
