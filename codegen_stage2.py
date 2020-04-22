@@ -2,22 +2,24 @@ import os
 import sys
 from shutil import copyfile
 
-FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-DEV_DIR = os.path.dirname(FILE_DIR)
-PACKAGE_DIR = os.path.dirname(DEV_DIR)
-SRC_DIR = os.path.dirname(PACKAGE_DIR)
-
-sys.path.append(SRC_DIR)
-from miniproject.dev.config import INT_BITS, C_DIR, PXD_DIR
-assert sys.path.pop() == SRC_DIR
+from config import SRC_DIR, DEV_DIR,  C_DIR, DOC_DIR, PXD_DIR
+from config import REAL_SRC_DIR 
+from config import INT_BITS 
+sys.path.append(REAL_SRC_DIR)
 
 
-from miniproject.mini_double import uint_double
-from miniproject.dev.double_function.codegen import write_std_int_header
+FILE_DIR = os.path.join(DEV_DIR, "triple_function")
+
+try:
+    # Try importing the fast C function
+    from miniproject.mini_double import uint_double 
+except (ImportError, ModuleNotFoundError):
+    # Use the slow python function if the C function is not available
+    from miniproject.dev.double_function.mini_double_ref import uint_double 
 
 
-os.chdir(FILE_DIR)
 
+from codegen_stage1 import write_std_int_header
 
 
 def write_triple_table():

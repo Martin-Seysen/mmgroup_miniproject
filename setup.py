@@ -16,7 +16,9 @@ from build_ext_steps import BuildExtCmd
 
 import config
 from config import EXTRA_COMPILE_ARGS, EXTRA_LINK_ARGS
-from config import C_DIR, DOC_DIR, DEV_DIR, PXD_DIR, PACKAGE_DIR
+from config import ROOT_DIR, SRC_DIR, PACKAGE_DIR, DEV_DIR
+from config import REAL_SRC_DIR
+from config import C_DIR, DOC_DIR,  PXD_DIR
 
 ####################################################################
 # Delete files
@@ -90,7 +92,7 @@ So it is safe to delete all files in this directory.
 ####################################################################
 
 def extend_path():
-    sys.path.append(PXD_DIR)
+    sys.path.append(REAL_SRC_DIR)
 
 ####################################################################
 # Desription of the list 'custom_presteps'.
@@ -128,7 +130,7 @@ stage1_presteps = CustomBuildStep(
   [make_dir, "src", "miniproject", "dev", "pxd_files"],
   [force_delete],
   [extend_path],
-  [sys.executable, os.path.join(DEV_DIR, "double_function", "codegen.py")],
+  [sys.executable,  "codegen_stage1.py"],
 )
 
 
@@ -148,7 +150,7 @@ stage1_shared = SharedExtension(
 
 stage2_presteps = CustomBuildStep(
   "prepare_stage2",
-  [sys.executable, os.path.join(DEV_DIR, "triple_function", "codegen.py")],
+  [sys.executable, "codegen_stage2.py"],
 )
 
 
