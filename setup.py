@@ -95,6 +95,17 @@ So it is safe to delete all files in this directory.
 def extend_path():
     sys.path.append(REAL_SRC_DIR)
 
+
+
+
+####################################################################
+# Check if we are in a 'readthedocs' environment
+####################################################################
+
+
+on_readthedocs = os.environ.get('READTHEDOCS') == 'True'
+
+
 ####################################################################
 # Desription of the list 'custom_presteps'.
 #
@@ -111,6 +122,9 @@ def extend_path():
 # interpreted as a function to be called with the arguments
 # given by the subsequent entries of that list.
 ####################################################################
+
+
+
 
 
 if os.name == "nt":
@@ -180,7 +194,7 @@ import_step = CustomBuildStep(
 )
 
 
-ext_modules=[
+ext_modules = [
     stage1_presteps,
     stage1_shared, 
     Extension("miniproject.mini_double",
@@ -214,6 +228,9 @@ ext_modules=[
     import_step,
 ]
 
+
+if on_readthedocs:
+    ext_modules  =[]
 
 long_description = """The *miniproject* package is a tiny package that demonstrates the
 build process for the *mmgroup* package. The *mmgroup* package is a 
