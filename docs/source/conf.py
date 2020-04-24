@@ -63,3 +63,14 @@ html_static_path = ['_static']
 latex_elements = {
   'extraclassoptions': 'openany,oneside'
 }
+
+
+# -- Mock up all C extension modules -----------------------------------------
+
+autodoc_mock_imports = [
+    "miniproject.mini_double",
+    "miniproject.mini_triple",
+    "blah",
+]
+
+
