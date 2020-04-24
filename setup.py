@@ -131,6 +131,8 @@ if os.name == "nt":
     shared_libs_stage1 = ["libdouble_code"]
     shared_libs_stage2 = shared_libs_stage1 + [
                 "libtriple_code"]
+elif not on_readthedocs:
+    shared_libs_stage1 = shared_libs_stage2 = []
 else:
     raise DistutilsPlatformError(
         "I don't know how to link to the shared libraries "
