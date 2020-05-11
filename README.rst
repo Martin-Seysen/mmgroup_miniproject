@@ -1,6 +1,6 @@
 This project demonstrates the build process for the ``mmgroup`` project.
 
-The build pocess for the ``mmgroup`` python  project is quite involved. 
+The build process for the ``mmgroup`` python  project is quite involved. 
 It proceeds in several stages. Python extensions generated in an early 
 stage of the build process are used to generate (rather large) tables
 which are used in automatically generated C programs. These C programs
@@ -8,7 +8,7 @@ are used as building building blocks for more python extensions in a
 later stage of the building process. 
 
 When porting the ``mmgroup`` project to another operating system we  
-highly recommend to port this miniproject first.
+highly recommend to port this ``miniproject`` first.
 
 
 Project Documentation see

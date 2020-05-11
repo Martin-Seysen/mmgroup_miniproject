@@ -1,7 +1,7 @@
-r"""Module ``build_ext_steps`` provides a custom version of 
+r"""Module ``build_ext_steps`` provides a customized version of 
 the 'build_ext' command for setup.py.
 
-It should be placed in the same directory as the module ``setup.py``
+It should be placed in the same directory as the module ``setup.py``.
 
 Distributing python packages
 ............................
@@ -12,10 +12,10 @@ The standard toolkit for distributing python packages is the
    python setup.py build_ext
 
 at the console for building the extensions to the python package, which 
-are typically written in a langage like C or C++ for the sake of speed. 
+are typically written in a language like C or C++ for the sake of speed. 
 We may use e.g. the ``Cython`` package to write python wrappers for the 
 functions written in C or C++. The ``setuptools`` package supports the
-integration of ``Cython`` entensions.
+integration of ``Cython`` extensions.
 
 The ``setup.py`` script describes a list of extensions, where each
 extension is an instance of class ``Extension`` which is provided  
@@ -59,7 +59,7 @@ python extension:
   * A python program ``make_stage1.py`` creates a C program 
     ``stage1.c``.
 
-  * We create an python extension ``stage1.so`` (or ``stage1.pyd`` 
+  * We create a python extension ``stage1.so`` (or ``stage1.pyd`` 
     in Windows) that makes the functionality of ``stage1.c``
     available in python.
 
@@ -67,7 +67,7 @@ python extension:
     ``stage2.c``. Here ``make_stage2.py`` may import ``stage1.so`` 
     (or ``stage1.pyd``).
 
-  * We create an python extension  that makes the functionality of 
+  * We create a python extension  that makes the functionality of 
     ``stage2.c``  available in python.
 
   * etc.
@@ -102,7 +102,7 @@ This change has a few consequences:
 
   * It is guaranteed that the extension are build in the given order
 
-  * Extensions are always build inplace (option ``build_ext --inplace``)
+  * Extensions are always build in place (option ``build_ext --inplace``)
     (The current version does not support building the extension in
     a special build directory.)
 
@@ -138,7 +138,7 @@ for adding user-defined functions to the build process.
 
 In the list ``ext_modules`` of extensions, instances of class 
 ``CustomBuildStep`` may be mixed with instances of class ``Extension``,
-Class ``CustomBuildStep`` models an arbitray  sequence of functions to 
+Class ``CustomBuildStep`` models an arbitrary  sequence of functions to 
 be executed.
 
 The constructor for that class takes a string 'name' describing the
@@ -154,7 +154,7 @@ the subprocess or to the function.
 Such a subprocess may be e.g. a step that generates C code to be
 used for building a subsequent python extension.    
 
-Its recomended to use the string ``sys.executable`` (provided
+Its recommended to use the string ``sys.executable`` (provided
 by the ``sys`` package) instead of the string ``'python'`` for 
 starting a python subprocess.
 
@@ -178,8 +178,8 @@ arguments are recognized:
 
 Here ``name`` is a Python dotted  name without any extension as in
 class ``Extension``. The command uses the C compiler to build
-the shared libary and stores it at the location given by ``name``
-in the same way as a python extension is built. Tha appropriate
+the shared library and stores it at the location given by ``name``
+in the same way as a python extension is built. The appropriate
 extension (e.g. '.so' for unix and '.dll' for Windows) is 
 automatically appended to the file name of the shared lirbary.
 
@@ -209,17 +209,17 @@ The user may have to perform some os-specific steps for making the
 libary available for python extension. Therefore he may read
 the variable ``os.name`` (which has value ``'nt'`` for Windows and
 ``'posix'`` for unix) and use class ``CustomBuildStep`` for performing
-the approprate steps.
+the appropriate steps.
 
 For Windows one has to add the directory of the import library
-(discussed in the pevious section) to the search path for the library
+(discussed in the previous section) to the search path for the library
 by specifying that directory in the ``'library_dirs'`` keyword 
 argument for class Extension. Also, one has to specify the name
 of the import library in the  ``'libraries'`` keyword argument for 
 class Extension. This is sufficient if the python extension and
 the DLLs used by that extension are in the same directory.
 
-More involved cases of shared libraries and the precedures required
+More involved cases of shared libraries and the procedures required
 for other operating systems are out of the scope of this documentation.
 
 Using an extension in a subsequent build step
@@ -236,13 +236,13 @@ build step. This may slow down the build process considerably. But it
 is better to have a slow build process than no build process at all.
 
 
-Technical remarks about shared libaries
-.......................................
+Technical remarks about shared libraries
+........................................
 
 The functionality for building a Windows DLL with the ``migw32`` 
 compiler in coded in function ``make_dll_win32_gcc``. One could have 
 used the functionality of class  ``distutils.ccompiler`` instead, 
-but the author has decided not to dive any deeper ito the source 
+but the author has decided not to dive any deeper into the source 
 code of the ``distutils`` package. It may be worth using class  
 ``distutils.ccompiler`` for porting the functionality of classes 
 ``BuildExtCmd`` and  ``SharedExtension`` to other compilers and 

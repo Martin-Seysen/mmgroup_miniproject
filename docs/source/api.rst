@@ -56,7 +56,7 @@ The build process for the *miniproject* package
 ===============================================
 
 The *miniproject* package
-contains a function ``double_function`` witten in C and stored in
+contains a function ``double_function`` written in C and stored in
 a shared library. That function doubles an integer value. There is a 
 python wrapper (written in Cython) which makes that function available
 in python. The ``pytest`` package is used to test that function.

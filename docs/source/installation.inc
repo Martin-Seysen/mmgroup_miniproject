@@ -17,14 +17,14 @@ the following python packages:
   ======================== =========================================================
   ``cython``               Development: integrating ``C`` programs into the 
                            ``mminiproject`` package
-  ``numpy``,  ``scipy``    Recomendation: These packages are not really needed here,
+  ``numpy``,  ``scipy``    Recommendation: These packages are not really needed here,
                            but they should be installed, since they are required for
                            the ``mmgroup`` package.
   ``pytest``               Testing: basic package used for testing
   ``setuptools``           Development: basic package used for setup and building
                            extensions
-  ``sphinx``               Docummentation: basic package used for documentation
-  ``sphinxcontrib-bibtex`` Docummentation: bibliography in BibTeX style
+  ``sphinx``               Documentation: basic package used for documentation
+  ``sphinxcontrib-bibtex`` Documentation: bibliography in BibTeX style
   ======================== =========================================================
     
 
@@ -65,7 +65,7 @@ From there run the following two commands::
 Installing a C compiler for cython in Windows 
 ---------------------------------------------
 
-The bad news for Windows developpers is that there is no pre-installed 
+The bad news for Windows developers is that there is no pre-installed 
 ``C`` compiler on a standard Windows system. However, the ``Cython`` 
 package requires a ``C`` compiler. Here in principle, the user has the 
 choice between the following two compilers:
@@ -76,7 +76,7 @@ choice between the following two compilers:
 
 The user has to install a ``C`` compiler so that it cooperates with 
 ``cython``. 
-That installation process is out of the scope of this documment.
+That installation process is out of the scope of this document.
 
 For installing ``MinGW``, one might start looking at
 https://cython.readthedocs.io/en/latest/src/tutorial/appendix.html.
