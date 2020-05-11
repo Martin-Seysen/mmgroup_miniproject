@@ -1,21 +1,24 @@
-r"""This is a custom version of the 'build_ext' command for setup.py
+r"""Module ``build_ext_steps`` provides a custom version of 
+the 'build_ext' command for setup.py.
+
+It should be placed in the same directory as the module ``setup.py``
 
 Distributing python packages
-----------------------------
+............................
 
 The standard toolkit for distributing python packages is the 
-``distutils`` or ``setuptools`` package. Here the user calls::
+``setuptools`` package. Here the user types::
 
    python setup.py build_ext
 
-for building the extensions to the python package, which are typically
-written in a langage like C or C++ for the sake of speed. We may use
-e.g. the ``Cython`` package to write python wrappers for the functions
-written in C or C++. There is support for integrating ``Cython`` 
-into ``distutils`` or ``setuptools``.
+at the console for building the extensions to the python package, which 
+are typically written in a langage like C or C++ for the sake of speed. 
+We may use e.g. the ``Cython`` package to write python wrappers for the 
+functions written in C or C++. The ``setuptools`` package supports the
+integration of ``Cython`` entensions.
 
 The ``setup.py`` script describes a list of extensions, where each
-extension is an instance of class ``Extension`` which is provided e.g. 
+extension is an instance of class ``Extension`` which is provided  
 by  ``setuptools``. Then it calls the ``setup`` function which builds
 all these extensions:
 
@@ -39,15 +42,15 @@ all these extensions:
       ext_modules = ext_modules,   # List of extensions to be built
   )
 
-We assume some familiarity with the standard python setup process.
-For background, we refer to
+We assume that the reader is familiar with the standard python setup 
+process. For background, we refer to
 
 
 https://setuptools.readthedocs.io/en/latest/
 
 
 A new paradigm for building python packages
--------------------------------------------
+...........................................
 
 
 This ``build_ext_steps`` module supports a new paradigm for building a 
@@ -69,14 +72,13 @@ python extension:
 
   * etc.
 
-This paradigm is not supported by  ``Cython``  or 
-``distutils``/``setuptools``.
+This paradigm is not supported by the ``setuptools`` package.
 
 Using class ``BuildExtCmd`` for the new paradigm
-------------------------------------------------
+................................................
 
 For using the new building paradigm we have to replace the standard 
-``build_ext`` by the class ``build_ext_steps.BuildExtCmd``. 
+class ``build_ext`` by the class ``build_ext_steps.BuildExtCmd``. 
 
 .. code-block:: python
 
@@ -105,7 +107,7 @@ This change has a few consequences:
     a special build directory.)
 
   * The building of all extensions is now forced 
-    (option ``build_ext --inplace``), regardless of any time stamps.
+    (option ``build_ext --f``), regardless of any time stamps.
 
   * A keyword argument ``extra_compile_args`` and ``extra_link_args`` 
     for  an instance of class ``Extension`` may be a dictionary
@@ -121,23 +123,27 @@ This change has a few consequences:
 Apart from these changes, an extension is created in the same way 
 as with ``setuptools``.
 
-For documentation of the Extension class see
+For a documentation of the ``Extension`` class in the ``setuptools``
+package, see
 
 https://docs.python.org/3/distutils/apiref.html?highlight=extension#distutils.core.Extension
 
 
-Inserting additional commands into the build process
-----------------------------------------------------
+Inserting user-defined functions into the build process
+.......................................................
 
+
+Module ``build_ext_steps`` provides a class ``CustomBuildStep``
+for adding user-defined functions to the build process.
 
 In the list ``ext_modules`` of extensions, instances of class 
 ``CustomBuildStep`` may be mixed with instances of class ``Extension``,
-Class ``CustomBuildStep``, which is provided by this modulee, models 
-an arbitray  sequence of commands to be executed.
+Class ``CustomBuildStep`` models an arbitray  sequence of functions to 
+be executed.
 
-The constructor for that class takes a string 'name' describing these
-commands, followed by an arbitrary number of lists, where each list
-describes a command to be executed.
+The constructor for that class takes a string 'name' describing the
+action of these functions, followed by an arbitrary number of lists, 
+where each list describes a function to be executed.
 
 Here the first entry of each list is either a string or a callable
 python function. If the first entry is a string then a subprocess
@@ -154,12 +160,13 @@ starting a python subprocess.
 
 
 Building shared libraries
--------------------------
+.........................
+
+Module ``build_ext_steps`` provides another class ``SharedExtension``
+for building  a shared library (or a DLL in Windows).
 
 In the list ``ext_modules`` of extensions, instances of class 
-``SharedExtension`` may be mixed with instances of other  classes,
-Class ``SharedExtension``, which is provided by this module, models 
-the construction of a shared library (or of a DLL in Windows).
+``SharedExtension`` may be mixed with instances of other  classes.
 
 Arguments for the constructor of class ``SharedExtension`` are the
 same as for class ``Extension``. Especially, the following keyword 
@@ -178,31 +185,34 @@ automatically appended to the file name of the shared lirbary.
 
 The user should provide an additional keyword argument ``implib_dir`` 
 specifying a directory where to store the import library for a Windows 
-DLL. In Windows the import library for ``foo.dll`` has the name 
-``libfoo.lib``. If a program uses a Windows DLL it should be linked to 
-that import libeary. In unix operating systems there is no concept 
-similar to an import library.
+DLL. In Windows, the import library for ``foo.dll`` has the name 
+``libfoo.lib``. If a program uses a Windows DLL then it should be 
+linked to that import library. In unix operating systems there is no 
+concept similar to an import library.
 
 Caution!!
 
 The current class ``SharedExtension`` supports Windows DLLs containing
-C programs (no C++) compiled with the mingw32 compiler only.
+C programs (no C++) compiled with the ``mingw32`` compiler only.
 
 
-Using a shared library in a subsequent step
--------------------------------------------
+Using a shared library in an extension
+......................................
+
+The reason for building a shared library is that several python
+extensions may use the same shared library.
 
 The way how a shared library (or a Windows DLL) is linked to a program
 using that library depends on the operating system.
 
-The user may have to perform some os-specific intermediate steps for 
-making the libary available for python extension. Therefore he may read
+The user may have to perform some os-specific steps for making the 
+libary available for python extension. Therefore he may read
 the variable ``os.name`` (which has value ``'nt'`` for Windows and
 ``'posix'`` for unix) and use class ``CustomBuildStep`` for performing
 the approprate steps.
 
 For Windows one has to add the directory of the import library
-(discussed in the last section) to the search path for the library
+(discussed in the pevious section) to the search path for the library
 by specifying that directory in the ``'library_dirs'`` keyword 
 argument for class Extension. Also, one has to specify the name
 of the import library in the  ``'libraries'`` keyword argument for 
@@ -212,21 +222,35 @@ the DLLs used by that extension are in the same directory.
 More involved cases of shared libraries and the precedures required
 for other operating systems are out of the scope of this documentation.
 
-Technical remarks about shared libaries
----------------------------------------
+Using an extension in a subsequent build step
+.............................................
 
-The functionality for building a Windows DLL with the migw32 compiler
-in coded in function make_dll_win32_gcc(). One could have used the
-functionality of class  ``distutils.ccompiler`` instead, but the 
-author has decided not to dive any eeper ito the source code of the 
-``distutils`` package. It may be worth using class  
+Once a python extension has been built, it can also be used in
+a subsequent step of the build process, e.g. for calculating large
+arrays of constants for C programs.
+
+This approach works well on a Windows system, but it might not work
+on other operating systems. Here it is a good idea to write a
+pure-python substitute for any C extension to be used in a subsequent
+build step. This may slow down the build process considerably. But it 
+is better to have a slow build process than no build process at all.
+
+
+Technical remarks about shared libaries
+.......................................
+
+The functionality for building a Windows DLL with the ``migw32`` 
+compiler in coded in function ``make_dll_win32_gcc``. One could have 
+used the functionality of class  ``distutils.ccompiler`` instead, 
+but the author has decided not to dive any deeper ito the source 
+code of the ``distutils`` package. It may be worth using class  
 ``distutils.ccompiler`` for porting the functionality of classes 
 ``BuildExtCmd`` and  ``SharedExtension`` to other compilers and 
 operating systems.
 
-The mingw32 compiler is not the standard compiler for python on
+The ``mingw32`` compiler is not the standard compiler for python on
 Windows. C++ files should be compiled with the standard compiler
-(which is ``'msvc'`` for Windows) in order to avoid trouble with 
+(which is ``msvc`` for Windows) in order to avoid trouble with 
 name mangling.
 """
 
