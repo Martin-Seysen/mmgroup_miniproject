@@ -116,6 +116,25 @@ if not on_readthedocs and os.name == "posix":
 
 
 ####################################################################
+# Add extensions and shared libraries to package data
+####################################################################
+
+
+if os.name in ["nt"]:
+    extension_wildcards =  ["*.pyd", "*.dll"]     
+elif os.name in ["posix"]:
+    extension_wildcards =  ["*.so"]  
+else:   
+    extension_wildcards =  []  
+
+
+package_data = {
+        # If any package contains *.txt or *.rst files, include them:
+        "miniproject": extension_wildcards
+}
+
+
+####################################################################
 # Desription of the list 'custom_presteps'.
 #
 # This is a list of programs to be run before executing the 'build_ext' 
@@ -332,6 +351,7 @@ setup(
         'build_ext': BuildExtCmd,
     },
     ext_modules = ext_modules,
+    package_data = package_data,
     include_dirs=[np.get_include()],  # This gets all the required Numpy core files
 )
 

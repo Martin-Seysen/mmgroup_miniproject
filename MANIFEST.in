@@ -9,8 +9,6 @@ include docs/source/*.rst
 include docs/source/*.inc
 include docs/source/*.py
 include docs/source/*.bib
-include src/miniproject/*.pyd
-include src/miniproject/*.dll
 
 
 
