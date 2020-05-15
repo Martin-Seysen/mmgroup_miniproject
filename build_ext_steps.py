@@ -181,7 +181,7 @@ class ``Extension``. The command uses the C compiler to build
 the shared library and stores it at the location given by ``name``
 in the same way as a python extension is built. The appropriate
 extension (e.g. '.so' for unix and '.dll' for Windows) is 
-automatically appended to the file name of the shared lirbary.
+automatically appended to the file name of the shared library.
 
 The user should provide an additional keyword argument ``implib_dir`` 
 specifying a directory where to store the import library for a Windows 
@@ -206,7 +206,7 @@ The way how a shared library (or a Windows DLL) is linked to a program
 using that library depends on the operating system.
 
 The user may have to perform some os-specific steps for making the 
-libary available for python extension. Therefore he may read
+library available for python extension. Therefore he may read
 the variable ``os.name`` (which has value ``'nt'`` for Windows and
 ``'posix'`` for unix) and use class ``CustomBuildStep`` for performing
 the appropriate steps.
@@ -439,14 +439,19 @@ class  BuildExtCmd(_build_ext):
         """ 
         compiler = self.compiler_name
         if os.name == "posix":
-            pass 
+            if compiler == 'unix':
+                make_so_posix_gcc(self, ext)
+            else:
+                raise DistutilsPlatformError(
+                  "I don't know how to build a posix shared library "
+                  "with the '%s' compiler" % compiler)
         elif os.name == "nt":
             if compiler == 'mingw32':
                 make_dll_nt_mingw32(self, ext)
             else:
                 raise DistutilsPlatformError(
                   "I don't know how to build a Windows DLL "
-                  "with the '%s' compiler" % compilier)
+                  "with the '%s' compiler" % compiler)
         else:
             raise DistutilsPlatformError(
                   "I don't know how to build a shared library "
@@ -552,7 +557,7 @@ def make_dll_nt_mingw32(cmd, ext):
 
     # Link
     largs = link_args[:] + objects 
-    for inc_dir in ext.include_dirs:
+    for inc_dir in ext.library_dirs:
         # same search path for include files an libraries
         largs.append("-L" + inc_dir)
     for library in ext.libraries: 
@@ -579,6 +584,61 @@ def make_dll_nt_mingw32(cmd, ext):
 
     #Todo: copy dll to build path if requested
     
+
+
+def make_so_posix_gcc(cmd, ext):
+    """Create a posix shared library with gcc"""
+    compile_args = [ "-c", "-Wall"] + ext.extra_compile_args 
+    for ipath in ext.include_dirs:
+        compile_args.append("-I" + os.path.realpath(ipath))
+    link_args = ["-shared",  "-Wall"] + ext.extra_link_args 
+    objects = []
+
+    # add define macros
+    for name, value in ext.define_macros:
+        if value is None:
+            compile_args.append("-D" + name)
+        else:
+            compile_args.append("-D" + name + "=" + value)
+
+    # add undef macros
+    for name in ext.undef_macros:
+        compile_args.append("-U" + name)
+
+    # Compile sources and add objects to list 'objects'
+    for source in ext.sources:
+        args = compile_args[:] + ["-fPIC"]
+        args.append(os.path.realpath(source))
+        args.append("-o")
+        obj = os.path.realpath(os.path.splitext(source)[0] + ".o")
+        args.append(obj)
+        objects.append(obj)
+        print("gcc " + " ".join(args))
+        subprocess.call(["cc"] + args) 
+
+    # Link
+    largs = link_args[:] + objects 
+    for inc_dir in ext.library_dirs:
+        # same search path for include files an libraries
+        largs.append("-L" + inc_dir)
+    for library in ext.libraries: 
+        largs.append("-l" + library )
+    dll_name = cmd.get_shared_ext_filename(ext.name).split("/")
+    dll_name[-1] =  "lib" + dll_name[-1]  
+    dll_path =   os.path.join(cmd.get_package_dir(), *dll_name)
+    largs +=  ["-o",  dll_path ]
+    subprocess.call(["cc"] + largs) 
+
+    print("removing object files...")
+    for obj in objects:
+        os.remove(obj)
+    print(dll_path + "\nhas been generated.\n")
+
+    #Todo: copy dll to build path if requested
+    
+
+
+
 
 
 

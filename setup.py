@@ -97,13 +97,22 @@ def extend_path():
 
 
 
-
 ####################################################################
 # Check if we are in a 'readthedocs' environment
 ####################################################################
 
 
 on_readthedocs = os.environ.get('READTHEDOCS') == 'True'
+
+
+####################################################################
+# Set path for shared libraries in linux
+####################################################################
+
+if not on_readthedocs and os.name == "posix":    
+    old_ld_path = os.getenv("LD_LIBRARY_PATH")
+    old_ld_path = old_ld_path + ";" if old_ld_path else ""
+    os.environ["LD_LIBRARY_PATH"] =  old_ld_path + PACKAGE_DIR
 
 
 ####################################################################
@@ -126,13 +135,17 @@ on_readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
 
 
+if on_readthedocs:
+    shared_libs_stage1 = shared_libs_stage2 = []
 
-if os.name == "nt":
+elif os.name in ["nt"]:
     shared_libs_stage1 = ["libdouble_code"]
     shared_libs_stage2 = shared_libs_stage1 + [
                 "libtriple_code"]
-elif on_readthedocs:
-    shared_libs_stage1 = shared_libs_stage2 = []
+elif os.name in ["posix"]:
+    shared_libs_stage1 = ["double_code"]
+    shared_libs_stage2 = shared_libs_stage1 + [
+                "triple_code"]
 else:
     raise DistutilsPlatformError(
         "I don't know how to link to the shared libraries "
@@ -152,7 +165,7 @@ stage1_presteps = CustomBuildStep(
 
 
 stage1_shared = SharedExtension(
-   "miniproject.double_code",
+    "miniproject.double_code",
     sources = [
         os.path.join(C_DIR,  "double_function.c"),
     ],
@@ -179,7 +192,7 @@ stage2_shared = SharedExtension(
     ],
     libraries = shared_libs_stage1, 
     include_dirs = [ C_DIR ],
-    library_dirs = [ C_DIR],
+    library_dirs = [ C_DIR, PACKAGE_DIR],
     extra_compile_args = EXTRA_COMPILE_ARGS, 
     extra_link_args = EXTRA_LINK_ARGS,
     implib_dir = C_DIR,
@@ -302,7 +315,7 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-         'numpy', 'scipy', 
+         'numpy', 
     ],
     extras_require={
         # eg:
@@ -310,11 +323,10 @@ setup(
         #   ':python_version=="2.6"': ['argparse'],
     },
     setup_requires=[
-        'numpy', 'scipy', 'pytest-runner', 'Cython',
-        # 'sphinx',  'sphinxcontrib-bibtex',
+        'numpy', 'cython',
     ],
     tests_require=[
-        'pytest',
+        'pytest', 'scipy', 
     ],
     cmdclass={
         'build_ext': BuildExtCmd,
