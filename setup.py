@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import os
+import re
 import subprocess
 import numpy as np
 from glob import glob
@@ -19,7 +20,7 @@ import config
 from config import EXTRA_COMPILE_ARGS, EXTRA_LINK_ARGS
 from config import ROOT_DIR, SRC_DIR, PACKAGE_DIR, DEV_DIR
 from config import REAL_SRC_DIR
-from config import C_DIR, DOC_DIR,  PXD_DIR
+from config import C_DIR, DOC_DIR, PXD_DIR
 
 ####################################################################
 # Delete files
@@ -112,7 +113,8 @@ on_readthedocs = os.environ.get('READTHEDOCS') == 'True'
 if not on_readthedocs and os.name == "posix":    
     old_ld_path = os.getenv("LD_LIBRARY_PATH")
     old_ld_path = old_ld_path + ";" if old_ld_path else ""
-    os.environ["LD_LIBRARY_PATH"] =  old_ld_path + PACKAGE_DIR
+    new_LD_LIBRARY_PATH = os.path.abspath(PACKAGE_DIR)
+    os.environ["LD_LIBRARY_PATH"] =  old_ld_path + new_LD_LIBRARY_PATH 
 
 
 ####################################################################
@@ -356,4 +358,18 @@ setup(
 )
 
 
+if not on_readthedocs and os.name == "posix":    
+    if "bdist_wheel" in sys.argv:
+        PROJECT_NAME = r"miniproject"
+        SUFFIX_MATCH = r"[-0-9A-Za-z._]+linux[-0-9A-Za-z._]+\.whl"
+        DIST_DIR = "dist"
+        w_match = re.compile(PROJECT_NAME + SUFFIX_MATCH)
+        wheels = [s for s in os.listdir(DIST_DIR) if w_match.match(s)]
+        for wheel in wheels:
+            wheel_path = os.path.join(DIST_DIR, wheel)
+            args = ["auditwheel", "-v", "repair", wheel_path]
+            print(" ".join(args))
+            subprocess.call(args)
 
+
+           
