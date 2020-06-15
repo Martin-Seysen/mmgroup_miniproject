@@ -53,7 +53,7 @@ To build the required extension, go to root directory of the distribution.
 The is the directory containing the files ``setup.py`` and ``README.rst``.
 From there run the following two commands::
 
-    python setup.py build_ext -cmingw32
+    python setup.py build_ext 
     pytest src/miniproject/ -v
 
 
@@ -70,9 +70,9 @@ The bad news for Windows developers is that there is no pre-installed
 package requires a ``C`` compiler. Here in principle, the user has the 
 choice between the following two compilers:
 
-   *  ``MinGW-w64``
-
    *  ``MSVC``
+
+   *  ``MinGW-w64``
 
 The user has to install a ``C`` compiler so that it cooperates with 
 ``cython``. 
@@ -84,8 +84,25 @@ https://cython.readthedocs.io/en/latest/src/tutorial/appendix.html.
 For installing ``MSVC``, one might start looking at 
 https://wiki.python.org/moin/WindowsCompilers
 
-The current ``setup.py`` supports ``MinGW`` for 64-bit Windows only.
+The current ``setup.py`` supports ``MinGW`` and ``MSVC`` for 64-bit 
+Windows. According to the last URL the ``MinGW`` compiler works with 
+all Python versions up to 3.4. 
 
-The  Anaconda distribution of Python 3.7 for 64-bit Windows contains 
-a suitable ``MinGW`` version.
+The author has installed the ``MSVC`` compiler with the Microsoft
+*Build Tools for Visual Studio* from:
+
+https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16 ,
+
+following the instructions in
+
+https://www.scivision.dev/python-windows-visual-c-14-required/  .
+
+Before typing ``python setup.py bdist_wheel`` in a Windows command 
+line the author had to type::
+
+
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+
+Here the path my be different on the user's Windows system.
+
 
